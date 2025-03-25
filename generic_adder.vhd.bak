@@ -1,0 +1,39 @@
+library ieee;
+use ieee.std_logic_1164.all;
+use ieee.numeric_std.all;
+
+entity generic_adder is
+
+	generic (
+		DATA_WIDTH : natural := 4
+	);
+
+	port (
+		A	 : in  std_logic_vector ((DATA_WIDTH-1) downto 0);
+		B	 : in  std_logic_vector	((DATA_WIDTH-1) downto 0);
+		SUM : out std_logic_vector ((DATA_WIDTH-1) downto 0);
+		OVERF : out std_logic;
+		CARRY : out std_logic
+	);
+
+end entity;
+
+architecture v1 of generic_adder is
+
+	signal un_SUM  	 : unsigned ((DATA_WIDTH) downto 0); -- producing a temperary signal to store the unsigned SUM
+	signal sign_SUM  	 : signed	((DATA_WIDTH) downto 0); -- producing a temperary signal to store the signed SUM
+	
+begin
+	process (A,B) is
+			begin	
+
+				sign_SUM <= (null & signed(A) + signed(B)); -- producing the unsigned SUM and with 0 to make a 5 bit output with carry
+				un_SUM <= (null & unsigned(A) + unsigned(B)); -- producing the signed SUM and with 0 to make a 5 bit output with carry
+				
+				SUM <= std_logic_vector(un_SUM((DATA_WIDTH-1) downto 0)); -- puts the bottom 4 bits as the SUM output
+				
+				CARRY <= std_logic(un_SUM(DATA_WIDTH)); -- carry using the unsigned sum
+				OVERF <= std_logic(sign_SUM(DATA_WIDTH)); -- overflow using the signed sum
+				
+	end process;
+end v1;
